@@ -44,14 +44,12 @@ export default function RegisterPage() {
         try {
             const result = await register(values);
 
-            if (result.error) {
-                toast.error(result.error);
-            } else {
-                toast.success("Account created successfully. Please login.");
+            if (result.success) {
+                toast.info(result.message || "Esta es una versión demo. Usa: demo@demo.com / demo");
                 router.push("/auth/login");
             }
         } catch (error) {
-            toast.error("An error occurred during registration");
+            toast.error("Error durante el registro");
         } finally {
             setLoading(false);
         }
