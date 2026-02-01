@@ -1,4 +1,4 @@
-# FNOL Pro - First Notice of Loss Management
+# FNOL Pro - First Notice of Loss Management - VERIFIED BY ANTIGRAVITY
 
 FNOL Pro is a professional educational web application designed for insurance companies to digitize and standardize the **First Notice of Loss (FNOL)** process.
 
