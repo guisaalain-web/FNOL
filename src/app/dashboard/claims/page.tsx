@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
 import {
@@ -17,19 +16,32 @@ import { FileText, PlusCircle } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+// Demo claims data
+const DEMO_CLAIMS = [
+    {
+        id: "1",
+        claimNumber: "FNOL-582103",
+        type: "AUTO",
+        status: "IN_REVIEW",
+        createdAt: new Date("2026-01-28"),
+        incidentDate: new Date("2026-01-28"),
+    },
+    {
+        id: "2",
+        claimNumber: "FNOL-694821",
+        type: "HOME",
+        status: "NEW",
+        createdAt: new Date("2026-01-30"),
+        incidentDate: new Date("2026-01-29"),
+    },
+];
+
 export default async function ClaimsPage() {
     const session = await getServerSession(authOptions);
 
     if (!session?.user) return null;
 
-    const claims = await prisma.claim.findMany({
-        where: {
-            userId: (session.user as any).id,
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+    const claims = DEMO_CLAIMS;
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -48,15 +60,15 @@ export default async function ClaimsPage() {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">My Claims</h2>
+                    <h2 className="text-3xl font-bold tracking-tight">Mis Reclamaciones</h2>
                     <p className="text-muted-foreground">
-                        Manage and track the status of your reported incidents.
+                        Gestiona y rastrea el estado de tus incidentes reportados.
                     </p>
                 </div>
                 <Button asChild>
                     <Link href="/dashboard/claims/new">
                         <PlusCircle className="mr-2 h-4 w-4" />
-                        New Claim
+                        Nueva Reclamación
                     </Link>
                 </Button>
             </div>
@@ -65,19 +77,19 @@ export default async function ClaimsPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Claim #</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Date Filed</TableHead>
-                            <TableHead>Incident Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>Reclamación #</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Fecha Creación</TableHead>
+                            <TableHead>Fecha Incidente</TableHead>
+                            <TableHead>Estado</TableHead>
+                            <TableHead className="text-right">Acciones</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {claims.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={6} className="h-24 text-center">
-                                    No claims found.
+                                    No se encontraron reclamaciones.
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -98,7 +110,7 @@ export default async function ClaimsPage() {
                                         <Button variant="ghost" size="sm" asChild>
                                             <Link href={`/dashboard/claims/${claim.id}`}>
                                                 <FileText className="mr-2 h-4 w-4" />
-                                                View Details
+                                                Ver Detalles
                                             </Link>
                                         </Button>
                                     </TableCell>
@@ -107,6 +119,10 @@ export default async function ClaimsPage() {
                         )}
                     </TableBody>
                 </Table>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground border-t pt-4">
+                🎓 <strong>Versión Demo</strong> - Datos de ejemplo para demostración.
             </div>
         </div>
     );

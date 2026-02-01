@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
 import { redirect } from "next/navigation";
@@ -14,9 +13,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { format } from "date-fns";
-import { StatusUpdater } from "@/components/admin/status-updater";
 
 export const dynamic = "force-dynamic";
+
+// Demo claims for admin view
+const DEMO_ADMIN_CLAIMS = [
+    {
+        id: "1",
+        claimNumber: "FNOL-582103",
+        type: "AUTO",
+        status: "IN_REVIEW",
+        createdAt: new Date("2026-01-28"),
+        user: {
+            name: "María García",
+            email: "maria@ejemplo.com",
+        },
+    },
+    {
+        id: "2",
+        claimNumber: "FNOL-694821",
+        type: "HOME",
+        status: "NEW",
+        createdAt: new Date("2026-01-30"),
+        user: {
+            name: "Carlos López",
+            email: "carlos@ejemplo.com",
+        },
+    },
+];
 
 export default async function AdminDashboardPage() {
     const session = await getServerSession(authOptions);
@@ -25,16 +49,7 @@ export default async function AdminDashboardPage() {
         redirect("/dashboard");
     }
 
-    const allClaims = await prisma.claim.findMany({
-        include: {
-            user: {
-                select: { name: true, email: true },
-            },
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+    const allClaims = DEMO_ADMIN_CLAIMS;
 
     const getStatusColor = (status: string) => {
         switch (status) {
@@ -52,9 +67,9 @@ export default async function AdminDashboardPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+                <h2 className="text-3xl font-bold tracking-tight">Panel de Administración</h2>
                 <p className="text-muted-foreground">
-                    Global view of all registered claims across the platform.
+                    Vista global de todas las reclamaciones registradas en la plataforma.
                 </p>
             </div>
 
@@ -62,20 +77,19 @@ export default async function AdminDashboardPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Claim #</TableHead>
-                            <TableHead>Client</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Quick Actions</TableHead>
-                            <TableHead className="text-right">Link</TableHead>
+                            <TableHead>Reclamación #</TableHead>
+                            <TableHead>Cliente</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Fecha</TableHead>
+                            <TableHead>Estado</TableHead>
+                            <TableHead className="text-right">Ver</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {allClaims.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">
-                                    No claims registered in the system.
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    No hay reclamaciones registradas en el sistema.
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -97,12 +111,9 @@ export default async function AdminDashboardPage() {
                                             {claim.status}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell>
-                                        <StatusUpdater claimId={claim.id} currentStatus={claim.status} />
-                                    </TableCell>
                                     <TableCell className="text-right">
                                         <Button variant="ghost" size="sm" asChild>
-                                            <Link href={`/dashboard/claims/${claim.id}`}>Review</Link>
+                                            <Link href={`/dashboard/claims/${claim.id}`}>Revisar</Link>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -110,6 +121,10 @@ export default async function AdminDashboardPage() {
                         )}
                     </TableBody>
                 </Table>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground border-t pt-4">
+                🎓 <strong>Versión Demo</strong> - Datos de ejemplo para demostración.
             </div>
         </div>
     );

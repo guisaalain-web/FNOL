@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/select";
 import { updateClaimStatus } from "@/actions/admin";
 import { toast } from "sonner";
-import { ClaimStatus } from "@prisma/client";
+
+type ClaimStatus = "NEW" | "IN_REVIEW" | "CLOSED";
 
 interface StatusUpdaterProps {
     claimId: string;
@@ -27,10 +28,10 @@ export function StatusUpdater({ claimId, currentStatus }: StatusUpdaterProps) {
             if (result.error) {
                 toast.error(result.error);
             } else {
-                toast.success("Status updated");
+                toast.success("Estado actualizado (demo)");
             }
         } catch (error) {
-            toast.error("Failed to update status");
+            toast.error("Error al actualizar estado");
         } finally {
             setLoading(false);
         }
@@ -43,12 +44,12 @@ export function StatusUpdater({ claimId, currentStatus }: StatusUpdaterProps) {
             disabled={loading}
         >
             <SelectTrigger className="h-8 w-[130px]">
-                <SelectValue placeholder="Update status" />
+                <SelectValue placeholder="Actualizar estado" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="NEW">New</SelectItem>
-                <SelectItem value="IN_REVIEW">In Review</SelectItem>
-                <SelectItem value="CLOSED">Closed</SelectItem>
+                <SelectItem value="NEW">Nueva</SelectItem>
+                <SelectItem value="IN_REVIEW">En Revisión</SelectItem>
+                <SelectItem value="CLOSED">Cerrada</SelectItem>
             </SelectContent>
         </Select>
     );

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
-import { prisma } from "@/lib/prisma";
 import { getCompanyBranding, generateCertificateHTML } from "@/lib/certificate-utils";
 
 export async function GET(req: NextRequest) {
@@ -12,28 +11,20 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const user = await prisma.user.findUnique({
-            where: { id: (session.user as any).id },
-            select: {
-                name: true,
-                email: true,
-                insuranceCompany: true,
-            }
-        });
-
-        if (!user) {
-            return new NextResponse("User not found", { status: 404 });
-        }
+        // Demo user data
+        const user = {
+            name: session.user.name || "Usuario Demo",
+            email: session.user.email || "demo@demo.com",
+            insuranceCompany: "MAPFRE", // Default for demo
+        };
 
         const branding = getCompanyBranding(user.insuranceCompany);
         const html = generateCertificateHTML(user, branding);
 
-        // We return as HTML for simplicity or to be downloaded as .html
-        // Modern browsers handle window.print() well from HTML
         return new NextResponse(html, {
             headers: {
                 "Content-Type": "text/html",
-                "Content-Disposition": `attachment; filename="Certificate_${branding.name}.html"`,
+                "Content-Disposition": `attachment; filename=\"Certificate_${branding.name}.html\"`,
             },
         });
     } catch (error) {
