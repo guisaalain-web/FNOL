@@ -79,4 +79,7 @@ export const authOptions: NextAuthOptions = {
     pages: {
         signIn: "/auth/login",
     },
+    // PRO-TIP: Force the secret for the demo to always work on Vercel without env vars
+    secret: process.env.NEXTAUTH_SECRET || "antigravity-demo-secret-key-2025",
+    debug: true,
 };
